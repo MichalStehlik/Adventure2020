@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Adventure2020.Services
 {
-    interface ILocationProvider
+    public interface ILocationProvider
     {
-        bool ExistsLocation(int id);
-        ILocation GetLocation(int id);
-        IList<Connection> GetConnectionsFrom(int id);
-        IList<Connection> GetConnectionsTo(int id);
-        bool IsNavigationLegit(int from, int to, GameState state);
+        bool ExistsLocation(Room id);
+        Location GetLocation(Room id);
+        List<Connection> GetConnectionsFrom(Room id);
+        List<Connection> GetConnectionsTo(Room id);
+        bool IsNavigationLegitimate(Room from, Room to, GameState state);
     }
 }

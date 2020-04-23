@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace Adventure2020.Models
 {
-    public class Location : ILocation
+    public enum Room
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
+        Start,
+        GameOver,
+        Hall,
+        Library
     }
 }

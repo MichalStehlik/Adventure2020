@@ -1,4 +1,5 @@
 ﻿using Adventure2020.Models;
+using Adventure2020.Models.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,42 +9,52 @@ namespace Adventure2020.Services
 {
     public class LocationProvider : ILocationProvider
     {
-        private Dictionary<int, ILocation> _locations;
+        private Dictionary<Room, ILocation> _locations;
         private List<Connection> _map;
 
         public LocationProvider()
         {
-            _locations = new Dictionary<int, ILocation>();
+            _locations = new Dictionary<Room, ILocation>();
             _map = new List<Connection>();
-            _locations.Add(0, new Location { Description = "This is where our story starts." }); // Game starts
-            _locations.Add(1, new Location { Description = "All worldly things will one day perish. You just did." }); // Game Over
-            _locations.Add(2, new Location { Description = "You stand in seemingly empty hall ..." });
-            _locations.Add(3, new Location { Description = "Library is in utterly desolate state ..." });
-            _map.Add(new Connection(0, 2, "Go to hall"));
-            _map.Add(new Connection(2, 3, "Visit Library", (gs) => { if (gs.HP > 10) return true; return false; }));
+            _locations.Add(Room.Start, new Location { Title = "Start", Description = "This is where our story starts." }); // Game starts
+            _locations.Add(Room.GameOver, new Location { Title = "Game Over", Description = "All worldly things will one day perish. You just did." }); // Game Over
+            _locations.Add(Room.Hall, new Location { Title = "Hall", Description = "You stand in seemingly empty hall ..." });
+            _locations.Add(Room.Library, new Location { Title = "Library", Description = "Library is in utterly desolate state ..." });
+            _map.Add(new Connection(Room.Start, Room.Hall, "Go to hall"));
+            _map.Add(new Connection(Room.Hall, Room.Library, "Visit Library", (gs) => { if (gs.HP > 10) return true; return false; }));
+            _map.Add(new Connection(Room.Library, Room.Hall, "Return to hall"));
+            _map.Add(new Connection(Room.Library, Room.GameOver, "Get eaten by Cthulhu"));
         }
 
-        public bool ExistsLocation(int id)
+        public bool ExistsLocation(Room id)
+        {
+            return _locations.ContainsKey(id);
+        }
+
+        public List<Connection> GetConnectionsFrom(Room id)
+        {
+            if (ExistsLocation(id))
+            {
+                return _map.Where(m => m.From == id).ToList();
+            }
+            throw new InvalidLocation();
+        }
+
+        public List<Connection> GetConnectionsTo(Room id)
         {
             throw new NotImplementedException();
         }
 
-        public IList<Connection> GetConnectionsFrom(int id)
+        public Location GetLocation(Room id)
         {
-            throw new NotImplementedException();
+            if (ExistsLocation(id))
+            {
+                return (Location)_locations[id];
+            }
+            throw new InvalidLocation();
         }
 
-        public IList<Connection> GetConnectionsTo(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ILocation GetLocation(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsNavigationLegit(int from, int to, GameState state)
+        public bool IsNavigationLegitimate(Room from, Room to, GameState state)
         {
             throw new NotImplementedException();
         }

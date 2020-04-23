@@ -1,0 +1,15 @@
+﻿@page
+@model Adventure2020.StartModel
+@{
+    ViewData["Title"] = "Start";
+}
+
+<h1>@Model.Location.Title</h1>
+<div>@Model.Location.Description</div>
+<div class="m-1">
+    @foreach (var target in Model.Targets)
+    {
+        <a class="btn btn-secondary" asp-page="Place" asp-route-id="@target.To">@target.Description</a>
+    }
+</div>
+
